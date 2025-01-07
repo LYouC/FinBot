@@ -54,6 +54,20 @@
                             </n-list-item>
                         </n-list>
                     </n-card>
+
+                    <n-card title="近期记录" size="small">
+                        <template #header-extra>
+                            <n-button text @click="toggleSelectMode">
+                                {{ isSelectMode ? '完成' : '选择' }}
+                            </n-button>
+                        </template>
+
+                        <n-space vertical>
+                            <record-card v-for="record in records" :key="record.id" :record="record"
+                                :selectable="isSelectMode" v-model:selected="record.selected"
+                                @click="handleRecordClick(record)" />
+                        </n-space>
+                    </n-card>
                 </n-space>
             </n-card>
         </n-layout-content>
@@ -67,6 +81,7 @@ import { type GlobalTheme } from 'naive-ui'
 import SideNav from '@/components/SideNav.vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useRouter } from 'vue-router'
+import RecordCard from '@/components/RecordCard.vue'
 
 const layoutStore = useLayoutStore()
 const sideNavRef = ref()
@@ -82,12 +97,67 @@ function handleThemeChange(newTheme: GlobalTheme | null) {
     emit('update:theme', newTheme)
 }
 
+// 选择模式状态
+const isSelectMode = ref(false)
+
+interface Record {
+    id: number
+    date: Date
+    summary: string
+    details: string
+    amount: number
+    selected: boolean
+}
+
+// 模拟记录数据
+const records = ref<Record[]>([
+    {
+        id: 1,
+        date: new Date(),
+        summary: '午餐',
+        details: '公司附近的快餐店',
+        amount: -25,
+        selected: false
+    },
+    {
+        id: 2,
+        date: new Date(Date.now() - 3600000),
+        summary: '工资',
+        details: '8月份工资',
+        amount: 8000,
+        selected: false
+    },
+    {
+        id: 3,
+        date: new Date(Date.now() - 7200000),
+        summary: '购物',
+        details: '超市日用品',
+        amount: -199.5,
+        selected: false
+    }
+])
+
+// 切换选择模式
+function toggleSelectMode() {
+    records.value.forEach(record => console.log(record.selected))
+    isSelectMode.value = !isSelectMode.value
+    if (!isSelectMode.value) {
+        // 退出选择模式时清除所有选择
+        records.value.forEach(record => record.selected = false)
+    }
+}
+
+// 处理记录点击
+function handleRecordClick(record: Record) {
+    console.log('点击记录:', record)
+}
+
 </script>
 
 <style scoped>
 .main-content {
     padding: 16px;
-    transition: margin-left 0.3s ease;
+    transition: margin-left 0.8s ease;
 }
 
 .top-bar {

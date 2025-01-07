@@ -2,6 +2,7 @@
     <n-layout-sider :collapsed="collapsed" :collapsed-width="64" :width="240" :native-scrollbar="false"
         collapse-mode="width" :show-trigger="showTrigger" bordered class="side-nav" @collapse="collapsed = true"
         @expand="collapsed = false">
+        <br>
         <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" />
 
         <!-- 添加主题切换开关 -->
@@ -19,6 +20,7 @@
 
     <!-- 移动端抽屉 -->
     <n-drawer v-model:show="showDrawer" :width="240" placement="left">
+        <br>
         <n-menu :options="menuOptions" />
         <div class="theme-switch-drawer">
             <n-switch v-model:value="isDarkMode" @update:value="handleThemeChange">
