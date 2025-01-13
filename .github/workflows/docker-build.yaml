@@ -23,4 +23,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: registry.cn-guangzhou.aliyuncs.com/lyouc/test_github_action:v2.0
+          tags: registry.cn-guangzhou.aliyuncs.com/lyouc/finbot:latest

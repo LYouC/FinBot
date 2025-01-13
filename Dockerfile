@@ -9,7 +9,9 @@ RUN pnpm run build
 # 使用Nginx作为生产环境
 FROM python:3.10-slim as production-stage
 WORKDIR /app
-COPY --from=build-stage /app/dist /app
+RUN mkdir -p /app/dist
+COPY --from=build-stage /app/dist /app/dist
+COPY --from=build-stage /app/script /app/script
 RUN pip install fastapi uvicorn
 
 EXPOSE 3307
