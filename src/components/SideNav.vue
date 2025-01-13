@@ -2,7 +2,7 @@
   <n-layout-sider
     :collapsed="collapsed"
     :collapsed-width="64"
-    :width="240"
+    :width="200"
     :native-scrollbar="false"
     collapse-mode="width"
     :show-trigger="showTrigger"
@@ -10,6 +10,7 @@
     class="side-nav"
     @collapse="collapsed = true"
     @expand="collapsed = false"
+    :inverted="inverted"
   >
     <br />
     <n-menu
@@ -17,13 +18,14 @@
       :collapsed-width="64"
       :collapsed-icon-size="22"
       :options="menuOptions"
+      :inverted="inverted"
     />
 
     <!-- 添加主题切换开关 -->
     <div class="theme-switch">
       <n-switch v-model:value="isDarkMode" @update:value="handleThemeChange">
-        <template #checked> 暗色 </template>
-        <template #unchecked> 亮色 </template>
+        <template #checked>暗</template>
+        <template #unchecked>亮</template>
       </n-switch>
     </div>
   </n-layout-sider>
@@ -34,8 +36,8 @@
     <n-menu :options="menuOptions" />
     <div class="theme-switch-drawer">
       <n-switch v-model:value="isDarkMode" @update:value="handleThemeChange">
-        <template #checked>暗色</template>
-        <template #unchecked>亮色</template>
+        <template #checked>暗</template>
+        <template #unchecked>亮</template>
       </n-switch>
     </div>
   </n-drawer>
@@ -43,6 +45,14 @@
 
 <script setup lang="ts">
 import { ref, computed, h, type Component } from 'vue'
+
+defineProps({
+  inverted: {
+    type: Boolean,
+    default: false,
+  },
+})
+
 import { BookOutline, HomeOutline, SettingsOutline, PersonOutline } from '@vicons/ionicons5'
 import { NIcon, darkTheme, useOsTheme } from 'naive-ui'
 import { useLayoutStore } from '@/stores/layout'
@@ -112,14 +122,6 @@ const menuOptions = [
 </script>
 
 <style scoped>
-.side-nav {
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 1;
-}
-
 .mobile-menu-trigger {
   display: none;
 }

@@ -1,26 +1,42 @@
 <template>
-  <n-layout has-sider position="absolute">
-    <side-nav ref="sideNavRef" @update:theme="handleThemeChange" />
-    <n-layout-content :native-scrollbar="false" class="main-content">
-      <div class="top-bar">
-        <div class="left-section">
-          <n-button v-if="layoutStore.isMobile" text @click="handleMenuClick" class="menu-trigger">
-            <n-icon size="24">
-              <menu-outline />
-            </n-icon>
-          </n-button>
-        </div>
-
-        <div class="right-section">
-          <n-button text @click="router.push('/search')" class="search-button">
-            <n-icon size="24">
-              <search-outline />
-            </n-icon>
-          </n-button>
-        </div>
-      </div>
-
-      <n-card class="content-card">
+  <n-layout position="absolute">
+    <n-layout-header bordered style="height: 48px">
+      <n-flex justify="space-between">
+        <n-button
+          style="height: 48px; margin-left: 10px"
+          v-if="layoutStore.isMobile"
+          text
+          @click="handleMenuClick"
+          class="menu-trigger"
+        >
+          <n-icon size="30">
+            <menu-outline />
+          </n-icon>
+        </n-button>
+        <n-button
+          style="height: 48px; margin-left: 10px; font-size: 36px"
+          v-else
+          text
+          @click="handleMenuClick"
+          class="menu-trigger"
+        >
+          GISO
+        </n-button>
+        <n-button
+          style="height: 48px; margin-right: 10px"
+          text
+          @click="router.push('/search')"
+          class="search-button"
+        >
+          <n-icon size="30">
+            <search-outline />
+          </n-icon>
+        </n-button>
+      </n-flex>
+    </n-layout-header>
+    <n-layout has-sider position="absolute" style="top: 48px">
+      <side-nav ref="sideNavRef" @update:theme="handleThemeChange" />
+      <n-layout-content :native-scrollbar="false" class="main-content">
         <n-page-header subtitle="欢迎使用后台管理系统">
           <template #title>
             <n-gradient-text type="info"> 后台管理系统 </n-gradient-text>
@@ -72,8 +88,8 @@
             </n-space>
           </n-card>
         </n-space>
-      </n-card>
-    </n-layout-content>
+      </n-layout-content>
+    </n-layout>
   </n-layout>
 </template>
 
@@ -85,6 +101,7 @@ import SideNav from '@/components/SideNav.vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useRouter } from 'vue-router'
 import RecordCard from '@/components/RecordCard.vue'
+import { NIcon } from 'naive-ui'
 
 const layoutStore = useLayoutStore()
 const sideNavRef = ref()
@@ -158,17 +175,8 @@ function handleRecordClick(record: Record) {
 
 <style scoped>
 .main-content {
-  padding: 16px;
-  transition: margin-left 0.8s ease;
-}
-
-.top-bar {
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  /* margin-left: 1vw;
-    margin-right: 1vw; */
+  padding: 8px;
+  transition: margin-left 0.5s ease;
 }
 
 .left-section {
@@ -197,13 +205,15 @@ function handleRecordClick(record: Record) {
 
 @media (min-width: 640px) {
   .main-content {
-    margin-left: 64px;
+    margin-left: 12px;
+    margin-right: 8px;
   }
 }
 
 @media (min-width: 1024px) {
   .n-layout-sider:not(.n-layout-sider--collapsed) + .main-content {
-    margin-left: 240px;
+    margin-left: 16px;
+    margin-right: 12px;
   }
 }
 
