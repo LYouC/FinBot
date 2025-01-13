@@ -1,0 +1,26 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: ls -la
+
+      - name: 登录 Docker
+        uses: docker/login-action@v3
+        with:
+          registry: registry.cn-guangzhou.aliyuncs.com
+          username: ${{ secrets.ALIYUN_DOCKER_NAME}}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
+
+      - name: 构建 Docker 镜像
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: registry.cn-guangzhou.aliyuncs.com/lyouc/test_github_action:v2.0
