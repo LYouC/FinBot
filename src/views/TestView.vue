@@ -37,13 +37,28 @@
     <n-layout has-sider position="absolute" style="top: 48px">
       <side-nav ref="sideNavRef" @update:theme="handleThemeChange" />
       <n-layout-content :native-scrollbar="false" class="main-content">
-        <n-page-header subtitle="欢迎使用后台管理系统">
-          <template #title>
-            <n-gradient-text type="info"> 后台管理系统 </n-gradient-text>
-          </template>
-        </n-page-header>
-
-        <n-space vertical size="large" style="margin-top: 20px">
+        <n-flex justify="space-between">
+          <n-gradient-text type="primary" size="large"> 后台管理系统 </n-gradient-text>
+          <n-space style="margin-right: 5px; margin-top: 0px">
+            <n-button
+              text
+              type="warning"
+              v-show="isSelectMode"
+              @click="toggleDeleteWhenSelectMode"
+              style="height: 1.1em; vertical-align: middle; font-size: 1.1em"
+            >
+              批量删除选中记录
+            </n-button>
+            <n-button
+              text
+              @click="toggleSelectMode"
+              style="height: 1.1em; vertical-align: middle; font-size: 1.1em; margin-left: 5px"
+            >
+              {{ isSelectMode ? '取消' : '选择' }}
+            </n-button>
+          </n-space>
+        </n-flex>
+        <n-space vertical size="medium" style="margin-top: 20px">
           <n-card title="数据概览" size="small">
             <n-grid :cols="4" :x-gap="12">
               <n-gi>
@@ -60,34 +75,32 @@
               </n-gi>
             </n-grid>
           </n-card>
-
-          <n-card title="最近活动" size="small">
-            <n-list>
-              <n-list-item v-for="i in 3" :key="i">
-                <n-thing title="系统通知" content="这是一条系统通知消息..." />
-              </n-list-item>
-            </n-list>
-          </n-card>
-
-          <n-card title="近期记录" size="small">
-            <template #header-extra>
-              <n-button text @click="toggleSelectMode">
-                {{ isSelectMode ? '完成' : '选择' }}
-              </n-button>
-            </template>
-
-            <n-space vertical>
-              <record-card
-                v-for="record in records"
-                :key="record.id"
-                :record="record"
-                :selectable="isSelectMode"
-                v-model:selected="record.selected"
-                @click="handleRecordClick(record)"
-              />
-            </n-space>
-          </n-card>
         </n-space>
+        <n-divider dashed style="margin-top: 1em; margin-bottom: 1em"> </n-divider>
+        <n-card
+          v-for="recordGroup in records"
+          :key="recordGroup.date"
+          :title="recordGroup.date"
+          size="small"
+          hoverable
+        >
+          <template #header-extra>
+            <n-tag type="success"> +{{ recordGroup.income }} </n-tag>
+            <n-tag type="error"> -{{ recordGroup.outcome }} </n-tag>
+            <n-tag type="warning">
+              {{ recordGroup.income - recordGroup.outcome > 0 ? '+' : ''
+              }}{{ recordGroup.income - recordGroup.outcome }}
+            </n-tag>
+          </template>
+          <record-card
+            v-for="r in recordGroup.records"
+            :key="r.id"
+            :record="r"
+            :selectable="isSelectMode"
+            v-model:selected="r.selected"
+            @click="handleRecordClick(r)"
+          />
+        </n-card>
       </n-layout-content>
     </n-layout>
   </n-layout>
@@ -129,41 +142,83 @@ interface Record {
   selected: boolean
 }
 
+interface RecordGroup {
+  date: string
+  income: number
+  outcome: number
+  records: Record[]
+}
+
 // 模拟记录数据
-const records = ref<Record[]>([
+const records = ref<RecordGroup[]>([
   {
-    id: 1,
-    date: new Date(),
-    summary: '午餐',
-    details: '公司附近的快餐店',
-    amount: -25,
-    selected: false,
+    date: '2025-01-15', // 日期
+    income: 35, // 收入
+    outcome: 25, // 支出
+    records: [
+      {
+        id: 1,
+        date: new Date('2025-01-15T12:00:00'),
+        summary: '购买了一本《爱在西元前》',
+        details: '这是一本很好看的书',
+        amount: 25.5,
+        selected: false,
+      },
+      {
+        id: 2,
+        date: new Date('2025-01-15T12:30:00'),
+        summary: '购买了一本《爱在美元前》',
+        details: '这是一本很好看的书',
+        amount: 25.5,
+        selected: false,
+      },
+    ],
   },
   {
-    id: 2,
-    date: new Date(Date.now() - 3600000),
-    summary: '工资',
-    details: '8月份工资',
-    amount: 8000,
-    selected: false,
-  },
-  {
-    id: 3,
-    date: new Date(Date.now() - 7200000),
-    summary: '购物',
-    details: '超市日用品',
-    amount: -199.5,
-    selected: false,
+    date: '2025-01-14',
+    income: 36,
+    outcome: 2500,
+    records: [
+      {
+        id: 3,
+        date: new Date('2025-01-14T12:00:00'),
+        summary: '购买ice phone',
+        details: '这是一部很好看的手机',
+        amount: 2500,
+        selected: false,
+      },
+      {
+        id: 4,
+        date: new Date('2025-01-14T12:30:00'),
+        summary: '购买了一本《爱在东元前》',
+        details: '这是一本很好看的书',
+        amount: 25.5,
+        selected: false,
+      },
+    ],
   },
 ])
 
 // 切换选择模式
 function toggleSelectMode() {
-  records.value.forEach((record) => console.log(record.selected))
+  console.log('切换选择模式')
   isSelectMode.value = !isSelectMode.value
-  if (!isSelectMode.value) {
-    // 退出选择模式时清除所有选择
-    records.value.forEach((record) => (record.selected = false))
+}
+
+function toggleDeleteWhenSelectMode() {
+  console.log('删除选中记录')
+  records.value.forEach((group) => {
+    group.records = group.records.filter((r) => !r.selected)
+  })
+  for (let i = records.value.length - 1; i >= 0; i--) {
+    let total_income = 0
+    let total_outcome = 0
+    for (let j = records.value[i].records.length - 1; j >= 0; j--) {
+      if (records.value[i].records[j].amount > 0) total_income += records.value[i].records[j].amount
+      else total_outcome += records.value[i].records[j].amount
+    }
+    records.value[i].income = total_income
+    records.value[i].outcome = total_outcome
   }
 }
 
