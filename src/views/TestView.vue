@@ -1,63 +1,87 @@
 <template>
   <n-layout position="absolute">
     <n-layout-header bordered style="height: 48px">
-      <n-flex justify="space-between">
-        <n-button
-          style="height: 48px; margin-left: 10px"
-          v-if="layoutStore.isMobile"
-          text
-          @click="handleMenuClick"
-          class="menu-trigger"
-        >
-          <n-icon size="30">
-            <menu-outline />
-          </n-icon>
-        </n-button>
-        <n-button
-          style="height: 48px; margin-left: 10px; font-size: 36px"
-          v-else
-          text
-          @click="handleMenuClick"
-          class="menu-trigger"
-        >
-          GISO
-        </n-button>
-        <n-button
-          style="height: 48px; margin-right: 10px"
-          text
-          @click="router.push('/search')"
-          class="search-button"
-        >
-          <n-icon size="30">
-            <search-outline />
-          </n-icon>
-        </n-button>
-      </n-flex>
+      <n-grid x-gap="12" :cols="4">
+        <n-gi>
+          <n-button
+            style="height: 48px; margin-left: 10px"
+            v-if="layoutStore.isMobile"
+            text
+            @click="handleMenuClick"
+            class="menu-trigger"
+          >
+            <n-icon size="30">
+              <menu-outline />
+            </n-icon>
+          </n-button>
+          <n-button
+            style="height: 48px; margin-left: 10px; font-size: 36px"
+            v-else
+            text
+            @click="handleMenuClick"
+            class="menu-trigger"
+          >
+            <n-gradient-text> GISO </n-gradient-text>
+          </n-button>
+        </n-gi>
+        <n-gi :span="2">
+          <n-flex justify="space-between" style="align-items: center; height: 100%">
+            <n-input-group style="align-items: center">
+              <n-input placeholder="请输入搜索内容" />
+              <n-button
+                type="primary"
+                ghost
+                @click="router.push('/search')"
+                style="align-items: center"
+              >
+                <n-icon>
+                  <search-outline />
+                </n-icon>
+              </n-button>
+            </n-input-group>
+          </n-flex>
+        </n-gi>
+        <n-gi>
+          <n-flex justify="flex-end" style="margin-right: 10px; height: 100%">
+            <n-button
+              text
+              type="error"
+              v-show="isSelectMode"
+              @click="toggleDeleteWhenSelectMode"
+              size="large"
+            >
+              <template #icon>
+                <n-icon size="26px">
+                  <delete20-regular />
+                </n-icon>
+              </template>
+              {{ layoutStore.isMobile ? '' : '删除选中目标' }}
+            </n-button>
+            <n-button
+              text
+              size="large"
+              @click="toggleSelectMode"
+              style="align-items: center; vertical-align: middle"
+            >
+              <template #icon>
+                <n-icon size="26px">
+                  <template v-if="isSelectMode">
+                    <edit-off20-regular />
+                  </template>
+                  <template v-else>
+                    <edit20-regular />
+                  </template>
+                </n-icon>
+              </template>
+              {{ layoutStore.isMobile ? '' : isSelectMode ? '完成' : '编辑' }}
+            </n-button>
+          </n-flex>
+        </n-gi>
+      </n-grid>
     </n-layout-header>
     <n-layout has-sider position="absolute" style="top: 48px">
       <side-nav ref="sideNavRef" @update:theme="handleThemeChange" />
       <n-layout-content :native-scrollbar="false" class="main-content">
-        <n-flex justify="space-between">
-          <n-gradient-text type="primary" size="large"> 后台管理系统 </n-gradient-text>
-          <n-space style="margin-right: 5px; margin-top: 0px">
-            <n-button
-              text
-              type="warning"
-              v-show="isSelectMode"
-              @click="toggleDeleteWhenSelectMode"
-              style="height: 1.1em; vertical-align: middle; font-size: 1.1em"
-            >
-              批量删除选中记录
-            </n-button>
-            <n-button
-              text
-              @click="toggleSelectMode"
-              style="height: 1.1em; vertical-align: middle; font-size: 1.1em; margin-left: 5px"
-            >
-              {{ isSelectMode ? '取消' : '选择' }}
-            </n-button>
-          </n-space>
-        </n-flex>
         <n-space vertical size="medium" style="margin-top: 20px">
           <n-card title="数据概览" size="small">
             <n-grid :cols="4" :x-gap="12">
@@ -108,7 +132,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MenuOutline, SearchOutline } from '@vicons/ionicons5'
+import { MenuOutline, SearchOutline } from '@vicons/ionicons5/es'
+import { Edit20Regular, Delete20Regular, EditOff20Regular } from '@vicons/fluent'
 import { type GlobalTheme } from 'naive-ui'
 import SideNav from '@/components/SideNav.vue'
 import { useLayoutStore } from '@/stores/layout'
